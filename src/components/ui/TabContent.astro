@@ -1,0 +1,19 @@
+---
+const { label, className } = Astro.props;
+---
+
+<section class=`content-type ${className ? className : null}`>
+  <button class="content-type__button" tab-button>{label}</button>
+  <article class="content-type__article disable">
+    <slot />
+  </article>
+</section>
+
+<style>
+  .content-type__button {
+    width: 100%;
+  }
+  .disable {
+    display: none !important;
+  }
+</style>

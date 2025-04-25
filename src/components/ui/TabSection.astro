@@ -1,0 +1,65 @@
+---
+const { className } = Astro.props;
+---
+
+<section class=`choose-content-type ${className ? className : null}`>
+  <slot />
+  <nav class="content-options" id="content-options"></nav>
+  <hr class="solid" />
+  <article class="content-value" id="content-value"></article>
+</section>
+
+<style is:global>
+  .content-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  hr.solid {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+</style>
+
+<script>
+  const $contentOptions = document.querySelectorAll(".content-type");
+  const navigationOptions = document.querySelector("#content-options");
+  const contentValue = document.querySelector("#content-value");
+
+  /* change the content avilable */
+  $contentOptions.forEach((option) => {
+    navigationOptions?.appendChild(option.children[0]);
+    contentValue?.appendChild(option.children[0]);
+    option.classList.forEach((item) => {
+      contentValue?.classList.add(item);
+    });
+
+    option.remove();
+  });
+
+  /* convert the children nodes list into an array */
+  const navigationOptionsArray = Array.prototype.slice.call(
+    navigationOptions!.children,
+  );
+  /* handle the state of each content type */
+  navigationOptionsArray?.forEach((option, index) => {
+    option.addEventListener("click", () => {
+      /* set all to disable */
+      document.querySelectorAll(".content-type__article").forEach((option) => {
+        option.classList.add("disable");
+      });
+
+      /* enable only the needed one */
+      contentValue?.children[index].classList.remove("disable");
+
+      navigationOptionsArray.forEach((option) => {
+        option.classList.remove("selected");
+      });
+      option.classList.add("selected");
+
+
+    });
+  });
+</script>

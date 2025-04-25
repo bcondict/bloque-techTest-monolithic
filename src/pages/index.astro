@@ -1,11 +1,155 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { fetchHandler } from '../components/controller/fetchHandler.controller';
 import Layout from '../layouts/Layout.astro';
+import TabSection from "../components/ui/TabSection.astro";
+import TabContent from "../components/ui/TabContent.astro";
+import type { Leaderboard, Player } from '../components/model/leaderboard.model';
+import type { Market, MarketItem } from '../components/model/market.model';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+
+const leaderboard: Leaderboard = await fetchHandler({
+  url: "https://api-game.bloque.app/game/leaderboard",
+  method: "GET",
+})
+
+const market: Market = await fetchHandler({
+  url: "https://api-game.bloque.app/game/market",
+  method: "GET"
+})
+
 ---
 
 <Layout>
-	<Welcome />
+  <section class="document">
+    <TabSection className="document__content">
+      <TabContent label="Leaderboard" className="document__content--child">
+        <section class="generalTable">
+          <article class="generalTable__title">
+            <p class="generalTable__rank">Rank</p>
+            <p class="generalTable__username">Username</p>
+            <p class="generalTable__level">Level</p>
+            <p class="generalTable__xp">XP</p>
+            <p class="generalTable__gold">Gold</p>
+          </article>
+          {leaderboard.players.map((player: Player) => {
+            return (
+              <article class="generalTable__player">
+                <p class="generalTable__rank">{player.rank}</p>
+                <p class="generalTable__username">{player.username}</p>
+                <p class="generalTable__level">{player.level}</p>
+                <p class="generalTable__xp">{player.xp}</p>
+                <p class="generalTable__gold">{player.gold}</p>
+              </article>
+            )
+          })}
+        </section>
+      </TabContent>
+      <TabContent label="Market" className="document__content--child">
+        <section class="generalTable">
+          {market.items.map((item: MarketItem) => {
+            return (
+              <article class="generalTable__marketItem">
+                <p class="generalTable__potionName">{item.name}</p>
+                <p class="generalTable__desciption">{item.description}</p>
+                <p class="generalTable__type">{item.type}</p>
+                <p class="generalTable__cost">{item.cost}</p>
+              </article>
+            );
+          })}
+        </section>
+      </TabContent>
+    </TabSection>
+  </section>
 </Layout>
+
+<style is:global>
+.document {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100dvw;
+  padding-block: 2rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.document__content {
+  width: 50%;
+}
+
+.document__content--child > * {
+  display: flex;
+  justify-content: center;
+}
+
+.generalTable {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid red;
+  border-radius: 0.5rem;
+
+  width: 90%;
+}
+
+.generalTable__title, .generalTable__player, .generalTable__marketItem {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 0.5rem;
+}
+.generalTable__player > *, .generalTable__title > *, .generalTable__marketItem > * {
+  text-align: left;
+}
+
+/* player */
+.generalTable__rank {
+  width: 2rem;
+}
+.generalTable__username {
+  width: 9rem;
+
+}
+.generalTable__level {
+  width: 2rem;
+
+}
+.generalTable__xp {
+  width: 3rem;
+
+}
+.generalTable__gold {
+  width: 3rem;
+}
+
+/* market */
+.generalTable__potionName {
+  width: 5rem;
+}
+.generalTable__desciption {
+  width: 14rem;
+}
+.generalTable__type {
+  width: 5rem;
+}
+.generalTable__cost {
+  width: 3rem;
+}
+
+[tab-button] {
+  border-radius: 0.5rem;
+  border: 1px solid;
+  font-size: 1.4rem;
+}
+
+@media screen and (max-width: 700px) {
+  .generalTable, .document__content {
+    width: 100%;
+    margin: 1rem;
+  }
+}
+</style>
