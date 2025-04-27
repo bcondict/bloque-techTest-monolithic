@@ -2,46 +2,170 @@
 const { className } = Astro.props;
 ---
 
-<section class=`choose-content-type ${className ? className : null}`>
+<section
+  class=`choose-content-type ${className ? className : null}`
+  id="choose-content-type"
+>
   <slot />
   <nav class="content-options" id="content-options"></nav>
-  <hr class="solid" />
+  <!-- <hr class="solid" /> -->
   <article class="content-value" id="content-value"></article>
 </section>
 
 <style is:global>
+  .choose-content-type {
+    position: relative;
+  }
   .content-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    /* display: grid; */
+    position: relative;
+
+    /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); */
+    display: flex;
     gap: 1rem;
-    margin-top: 2rem;
+    margin: 1.5rem 1rem;
+
+    border-radius: 3.5rem;
+    /* background-color: red; */
+
+    /* box-shadow: 0 0px 0px 10px; */
+    box-shadow:
+      inset 0 1px 5px 1px #5797a3,
+      0 0 0 2px #78bac8;
+    padding: 1px 2px;
+
+    transition: all 500ms ease;
+  }
+
+  .content-options > * {
+    padding: 0.8rem 0.5rem;
+
+    border: none;
+    border-radius: 3.5rem;
+
+    font-size: 1.3rem;
+    font-family: sans-serif;
+
+    color: transparent;
+    /* background: red; */
+    background: none;
+
+    cursor: pointer;
+    /* background: linear-gradient(to bottom, #79e1f2, #5cc2d6); */
+
+    transition: all 500ms ease;
+  }
+
+  .content-value {
+    margin-inline: 1rem;
+  }
+
+  .floating-button {
+    position: absolute;
+    top: calc(2.5rem + 1px);
+
+    padding: 0.8rem 0.5rem;
+
+    border: none;
+    border-radius: 3.5rem;
+
+    font-size: 1.3rem;
+    font-family: sans-serif;
+
+    color: #002742;
+    background: linear-gradient(to bottom, #79e1f2, #5cc2d6);
+
+    /* transition: all 500ms ease; */
+    left: calc(2rem + 2px);
+
+    --transformation_right: 17.26rem;
+  }
+  .content-options > *:not(.selected) {
+    color: white;
   }
 
   hr.solid {
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
+
+  .right {
+    animation: oneToTwo 500ms ease-in forwards;
+  }
+  .left {
+    animation: twoToOne 500ms ease-in forwards;
+  }
+
+  @media (max-width: 1281px) {
+    .floating-button {
+      --transformation_right: 19.4rem;
+    }
+  }
+  @media (max-width: 1024px) {
+    .floating-button {
+      --transformation_right: 11.4rem;
+    }
+  }
+  @media (max-width: 768px) {
+    .floating-button {
+      --transformation_right: 11.4rem;
+    }
+  }
+  @media (max-width: 480px) {
+    .floating-button {
+      --transformation_right: 9.9rem;
+    }
+  }
+
+  @keyframes oneToTwo {
+    from {
+      transform: translate(0);
+    }
+    to {
+      transform: translate(var(--transformation_right));
+    }
+  }
+
+  @keyframes twoToOne {
+    from {
+      transform: translate(var(--transformation_right));
+    }
+    to {
+      transform: translate(0);
+    }
+  }
 </style>
 
 <script>
   const $contentOptions = document.querySelectorAll(".content-type");
-  const navigationOptions = document.querySelector("#content-options");
-  const contentValue = document.querySelector("#content-value");
+  const $navigationOptions = document.querySelector("#content-options");
+  const $contentValue = document.querySelector("#content-value");
+  const $content = document.querySelector("#choose-content-type");
 
   /* change the content avilable */
   $contentOptions.forEach((option) => {
-    navigationOptions?.appendChild(option.children[0]);
-    contentValue?.appendChild(option.children[0]);
+    $navigationOptions?.appendChild(option.children[0]);
+    $contentValue?.appendChild(option.children[0]);
     option.classList.forEach((item) => {
-      contentValue?.classList.add(item);
+      $contentValue?.classList.add(item);
     });
 
     option.remove();
   });
 
+  /* make another invisible button */
+  const $tabElement = document.createElement("button");
+  $content?.appendChild($tabElement);
+  $tabElement.classList.add("floating-button", "left");
+
+  $tabElement.style.width = window.getComputedStyle(
+    $navigationOptions?.firstElementChild!,
+  ).width;
+  console.log("width", $navigationOptions?.firstElementChild!);
+
   /* convert the children nodes list into an array */
   const navigationOptionsArray = Array.prototype.slice.call(
-    navigationOptions!.children,
+    $navigationOptions!.children,
   );
   /* handle the state of each content type */
   navigationOptionsArray?.forEach((option, index) => {
@@ -52,14 +176,29 @@ const { className } = Astro.props;
       });
 
       /* enable only the needed one */
-      contentValue?.children[index].classList.remove("disable");
+      $contentValue?.children[index].classList.remove("disable");
 
       navigationOptionsArray.forEach((option) => {
         option.classList.remove("selected");
       });
       option.classList.add("selected");
 
+      $tabElement.classList.toggle("left");
+      $tabElement.classList.toggle("right");
 
+      $tabElement.innerText = option.innerText;
     });
+  });
+
+  document.addEventListener("resize", () => {
+    $tabElement.style.width = window.getComputedStyle(
+      $navigationOptions?.firstElementChild!,
+    ).width;
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    $contentValue?.children[0].classList.remove("disable");
+    $navigationOptions?.firstElementChild?.classList.add("selected");
+    $tabElement.innerText = $navigationOptions?.firstElementChild?.innerHTML!;
   });
 </script>
