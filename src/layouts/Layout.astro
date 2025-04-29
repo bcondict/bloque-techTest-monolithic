@@ -1,5 +1,5 @@
 ---
-import { ClientRouter } from "astro:transitions";
+
 ---
 
 <!doctype html>
@@ -10,7 +10,6 @@ import { ClientRouter } from "astro:transitions";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>Bloque Tech Test</title>
-    <ClientRouter />
   </head>
   <body>
     <slot />
@@ -41,11 +40,4 @@ import { ClientRouter } from "astro:transitions";
         });
     });
   }
-  // if (navigator.serviceWorker.controller) {
-  //   console.log("Active service worker found");
-  // } else {
-  //   navigator.serviceWorker.register("serviceWorker.js").then((_reg) => {
-  //     console.log("Service worker  registered");
-  //   });
-  // }
 </script>

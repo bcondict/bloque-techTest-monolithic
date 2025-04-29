@@ -1,30 +1,14 @@
 ---
-import { fetchHandler } from "../components/controller/fetchHandler.controller";
 import Layout from "../layouts/Layout.astro";
 import TabSection from "../components/ui/TabSection.astro";
 import TabContent from "../components/ui/TabContent.astro";
-import type {
-  Leaderboard,
-  Player,
-} from "../components/model/leaderboard.model";
-import type { Market, MarketItem } from "../components/model/market.model";
-
-const leaderboard: Leaderboard = await fetchHandler({
-  url: "https://api-game.bloque.app/game/leaderboard",
-  method: "GET",
-});
-
-const market: Market = await fetchHandler({
-  url: "https://api-game.bloque.app/game/market",
-  method: "GET",
-});
 ---
 
 <Layout>
   <section class="document">
     <TabSection className="document__content">
       <TabContent label="Leaderboard" className="document__content--child">
-        <section class="generalTable">
+        <section class="generalTable" id="generalTablePlayer">
           <article class="generalTable__title">
             <p class="generalTable__rank">Rank</p>
             <p class="generalTable__username">Username</p>
@@ -32,46 +16,132 @@ const market: Market = await fetchHandler({
             <p class="generalTable__xp">XP</p>
             <p class="generalTable__gold">Gold</p>
           </article>
-          {
-            leaderboard.players.map((player: Player) => {
-              return (
-                <article class="generalTable__player">
-                  <p class="generalTable__rank">{player.rank}</p>
-                  <p class="generalTable__username">{player.username}</p>
-                  <p class="generalTable__level">{player.level}</p>
-                  <p class="generalTable__xp">{player.xp}</p>
-                  <p class="generalTable__gold">{player.gold}</p>
-                </article>
-              );
-            })
-          }
+          <!-- { -->
+          <!--   leaderboard.players.map((player: Player) => { -->
+          <!--     return ( -->
+          <!--       <article class="generalTable__player"> -->
+          <!--         <p class="generalTable__rank">{player.rank}</p> -->
+          <!--         <p class="generalTable__username">{player.username}</p> -->
+          <!--         <p class="generalTable__level">{player.level}</p> -->
+          <!--         <p class="generalTable__xp">{player.xp}</p> -->
+          <!--         <p class="generalTable__gold">{player.gold}</p> -->
+          <!--       </article> -->
+          <!--     ); -->
+          <!--   }) -->
+          <!-- } -->
         </section>
       </TabContent>
       <TabContent label="Market" className="document__content--child">
-        <section class="generalTable">
+        <section class="generalTable" id="generalTableMarket">
           <article class="generalTable__title">
             <p class="generalTable__potionName">Name</p>
             <p class="generalTable__desciption">Description</p>
             <p class="generalTable__type">Type</p>
             <p class="generalTable__cost">Cost</p>
           </article>
-          {
-            market.items.map((item: MarketItem) => {
-              return (
-                <article class="generalTable__marketItem">
-                  <p class="generalTable__potionName">{item.name}</p>
-                  <p class="generalTable__desciption">{item.description}</p>
-                  <p class="generalTable__type">{item.type}</p>
-                  <p class="generalTable__cost">{item.cost}</p>
-                </article>
-              );
-            })
-          }
+          <!-- { -->
+          <!--   market.items.map((item: MarketItem) => { -->
+          <!--     return ( -->
+          <!--       <article class="generalTable__marketItem"> -->
+          <!--         <p class="generalTable__potionName">{item.name}</p> -->
+          <!--         <p class="generalTable__desciption">{item.description}</p> -->
+          <!--         <p class="generalTable__type">{item.type}</p> -->
+          <!--         <p class="generalTable__cost">{item.cost}</p> -->
+          <!--       </article> -->
+          <!--     ); -->
+          <!--   }) -->
+          <!-- } -->
         </section>
       </TabContent>
     </TabSection>
   </section>
 </Layout>
+
+<script>
+  import { fetchHandler } from "../components/controller/fetchHandler.controller";
+
+  import type {
+    Leaderboard,
+    Player,
+  } from "../components/model/leaderboard.model";
+  import type { Market, MarketItem } from "../components/model/market.model";
+
+  const $generalTablePlayer = document.getElementById("generalTablePlayer");
+  const $generalTableMarket = document.getElementById("generalTableMarket");
+
+  const leaderboard: Leaderboard = await fetchHandler({
+    url: "https://api-game.bloque.app/game/leaderboard",
+    method: "GET",
+  });
+
+  const market: Market = await fetchHandler({
+    url: "https://api-game.bloque.app/game/market",
+    method: "GET",
+  });
+
+  leaderboard.players.map((player: Player) => {
+    const newPlayer = document.createElement("article");
+    newPlayer.classList.add("generalTable__player");
+
+    /* values */
+    const playerRank = document.createElement("p");
+    playerRank.classList.add("generalTable__rank");
+    playerRank.innerText = String(player.rank);
+
+    const playerUsername = document.createElement("p");
+    playerUsername.classList.add("generalTable__username");
+    playerUsername.innerText = player.username;
+
+    const playerLevel = document.createElement("p");
+    playerLevel.classList.add("generalTable__level");
+    playerLevel.innerText = String(player.level);
+
+    const playerXp = document.createElement("p");
+    playerXp.classList.add("generalTable__xp");
+    playerXp.innerText = String(player.xp);
+
+    const playerGold = document.createElement("p");
+    playerGold.classList.add("generalTable__gold");
+    playerGold.innerText = String(player.gold);
+
+    newPlayer.appendChild(playerRank);
+    newPlayer.appendChild(playerUsername);
+    newPlayer.appendChild(playerLevel);
+    newPlayer.appendChild(playerXp);
+    newPlayer.appendChild(playerGold);
+
+    $generalTablePlayer?.appendChild(newPlayer);
+  });
+
+  market.items.map((item: MarketItem) => {
+    const newItem = document.createElement("article");
+    newItem.classList.add("generalTable__marketItem");
+
+    /* values */
+    const potionName = document.createElement("p");
+    potionName.classList.add("generalTable__potionName");
+    potionName.innerText = item.name;
+
+    const itemDescription = document.createElement("p");
+    itemDescription.classList.add("generalTable__desciption");
+    itemDescription.innerText = item.description;
+
+    const itemType = document.createElement("p");
+    itemType.classList.add("generalTable__type");
+    itemType.innerText = item.type;
+
+    const itemCost = document.createElement("p");
+    itemCost.classList.add("generalTable__cost");
+    itemCost.innerText = String(item.cost);
+
+    newItem.appendChild(potionName);
+    newItem.appendChild(itemDescription);
+    newItem.appendChild(itemType);
+    newItem.appendChild(itemCost);
+
+    $generalTableMarket?.appendChild(newItem);
+  });
+</script>
 
 <style is:global>
   :root {
