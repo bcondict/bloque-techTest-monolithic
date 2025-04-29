@@ -1,7 +1,7 @@
 ---
 import { fetchHandler } from "../components/controller/fetchHandler.controller";
 import Layout from "../layouts/Layout.astro";
-import TabSection from "../components/ui/TabSection.astro";
+import TabSection from "../components/ui/TabSection2.astro";
 import TabContent from "../components/ui/TabContent.astro";
 import type {
   Leaderboard,
@@ -95,7 +95,7 @@ const market: Market = await fetchHandler({
   }
 
   .document__content {
-    width: 30%;
+    width: 35%;
 
     border-radius: 2rem;
 
@@ -153,9 +153,11 @@ const market: Market = await fetchHandler({
     gap: 0.5rem;
   }
   .generalTable__player > *,
-  .generalTable__title > *,
   .generalTable__marketItem > * {
     text-align: left;
+  }
+  .generalTable__title > * {
+    text-align: center;
   }
 
   /* player */
@@ -184,16 +186,11 @@ const market: Market = await fetchHandler({
   }
   .generalTable__type {
     width: 5rem;
+    line-break: anywhere;
   }
   .generalTable__cost {
     width: 3rem;
   }
-
-  /* [tab-button] { */
-  /*   border-radius: 0.5rem; */
-  /*   border: 1px solid; */
-  /*   font-size: 1.4rem; */
-  /* } */
 
   @media screen and (max-width: 1281px) {
     .document__content {
@@ -204,12 +201,16 @@ const market: Market = await fetchHandler({
     .document__content {
       width: 80%;
     }
+    .document__content--child {
+      margin-inline: 0;
+    }
   }
   @media (max-width: 768px) {
     .document__content {
       width: 90%;
     }
+    .generalTable__desciption {
+      width: 53%;
+    }
   }
-
-  /* @media screen and (max-width: 1280px) { */
 </style>
