@@ -1,3 +1,7 @@
+---
+import { ClientRouter } from "astro:transitions";
+---
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -6,6 +10,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>Bloque Tech Test</title>
+    <ClientRouter />
   </head>
   <body>
     <slot />
@@ -13,12 +18,34 @@
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
 
     font-family: sans-serif;
-	}
+  }
 </style>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/bloque-techTest-monolithic/serviceWorker.js")
+        .then((registation) => {
+          console.log("ServiceWorker registered: ", registation);
+        })
+        .catch((error) => {
+          console.error("ServiceWorker registration failed: ", error);
+        });
+    });
+  }
+  // if (navigator.serviceWorker.controller) {
+  //   console.log("Active service worker found");
+  // } else {
+  //   navigator.serviceWorker.register("serviceWorker.js").then((_reg) => {
+  //     console.log("Service worker  registered");
+  //   });
+  // }
+</script>
